@@ -7,14 +7,14 @@ Symbol Table
     .__.ABS.                                                    =  000000 G
     .__.CPU.                                                    =  000000 L
     .__.H$L.                                                    =  000001 L
-  8 _UART_recvchar                                                 0002FF GR
+  8 _UART_recvchar                                                 000352 GR
   8 _UART_sendchar                                                 0002DA GR
-  8 _UART_sendnum                                                  000302 GR
+  8 _UART_sendnum                                                  0002FF GR
   8 _UART_sendtext                                                 0002E2 GR
-  8 ___str_0                                                       000464 R
-  8 ___str_1                                                       00046B R
-  8 ___str_2                                                       000473 R
-  8 ___str_3                                                       00047B R
+  8 ___str_0                                                       000462 R
+  8 ___str_1                                                       000469 R
+  8 ___str_2                                                       000471 R
+  8 ___str_3                                                       000479 R
     __divulong                                                     ****** GX
   5 __interrupt_vect                                               000000 R
     __modulong                                                     ****** GX
@@ -31,7 +31,7 @@ Symbol Table
   8 _delay_ms                                                      000055 GR
   8 _delay_timer                                                   00009A GR
   8 _delay_us                                                      000005 GR
-  8 _gpio_init                                                     00041D GR
+  8 _gpio_init                                                     00041B GR
   8 _i2c_ack_pos_current                                           000113 GR
   8 _i2c_ack_pos_next                                              00011B GR
   8 _i2c_clear_ADDR                                                000162 GR
@@ -49,9 +49,9 @@ Symbol Table
   8 _i2c_set_address                                               0000DA GR
   8 _i2c_set_start                                                 0000D5 GR
   8 _i2c_set_stop                                                  0000FB GR
-  8 _isr_UART1_RX                                                  000357 GR
-  8 _loop                                                          0003A3 GR
-  8 _main                                                          000387 GR
+  8 _isr_UART1_RX                                                  000355 GR
+  8 _loop                                                          0003A1 GR
+  8 _main                                                          000385 GR
   8 _pwm1_init                                                     000224 GR
   8 _pwm1_update                                                   0002AE GR
   8 _pwm1ch1_disable                                               00029F GR
@@ -91,7 +91,7 @@ Area Table
    5 HOME                                       size     83   flags    0
    6 GSINIT                                     size     1A   flags    0
    7 GSFINAL                                    size      3   flags    0
-   8 CODE                                       size    47E   flags    0
+   8 CODE                                       size    47C   flags    0
    9 INITIALIZER                                size      0   flags    0
    A CABS                                       size      0   flags    8
 

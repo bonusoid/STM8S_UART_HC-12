@@ -24,12 +24,12 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000005  s_SSEG                          
      0000001A  l_GSINIT                        
      00000083  l_HOME                          
-     000005C4  l_CODE                          
+     000005C2  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     00008664  s_INITIALIZER                   
+     00008662  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
@@ -84,7 +84,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    000005C4 =        1476. bytes (REL,CON)
+CODE                                000080A0    000005C2 =        1474. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -126,15 +126,15 @@ CODE                                000080A0    000005C4 =        1476. bytes (R
      00008364  _pwm2_update                       main
      0000837A  _UART_sendchar                     main
      00008382  _UART_sendtext                     main
-     0000839F  _UART_recvchar                     main
-     000083A2  _UART_sendnum                      main
-     000083F7  _isr_UART1_RX                      main
-     00008427  _main                              main
-     00008443  _loop                              main
-     000084BD  _gpio_init                         main
-     0000851E  __modulong                         
-     0000858E  __divulong                         
-     000085E8  __mullong                          
+     0000839F  _UART_sendnum                      main
+     000083F2  _UART_recvchar                     main
+     000083F5  _isr_UART1_RX                      main
+     00008425  _main                              main
+     00008441  _loop                              main
+     000084BB  _gpio_init                         main
+     0000851C  __modulong                         
+     0000858C  __divulong                         
+     000085E6  __mullong                          
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
 

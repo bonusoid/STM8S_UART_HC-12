@@ -5,12 +5,12 @@
 #include"periph_stm8s.h"
 
 //^^^^^^^^^^ UART FUNCTION ^^^^^^^^^^//
-void UART_sendchar(unsigned char usend)
+void UART_sendchar(unsigned char usend) //send 1 character via UART
 {
 	uart1_send(usend);
 }
 
-void UART_sendtext(unsigned char *usend)
+void UART_sendtext(unsigned char *usend) //send text via UART
 {
 	unsigned int stridx = 0;
 
@@ -21,16 +21,7 @@ void UART_sendtext(unsigned char *usend)
 	}
 }
 
-unsigned char UART_recvchar()
-{
-	unsigned char urecv;
-
-	urecv = uart1_recv();
-	
-	return urecv;
-}
-
-void UART_sendnum(unsigned int unum)
+void UART_sendnum(unsigned int unum) //send integer via UART
 {
 	unsigned char ibuff[6]; //MAX : 5 DIGIT : 65535
 
@@ -53,5 +44,14 @@ void UART_sendnum(unsigned int unum)
 	ibuff[ndigit] = '\0'; //last character is null
 
 	UART_sendtext(ibuff);
+}
+
+unsigned char UART_recvchar() //receive 1 character via UART (for Polling mode)
+{
+	unsigned char urecv;
+
+	urecv = uart1_recv();
+	
+	return urecv;
 }
 //__________ UART FUNCTION __________//

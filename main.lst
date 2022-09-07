@@ -1,7 +1,7 @@
                                       1 ;--------------------------------------------------------
                                       2 ; File Created by SDCC : free open source ANSI-C Compiler
                                       3 ; Version 3.5.0 #9253 (Apr  3 2018) (Linux)
-                                      4 ; This file was generated Tue Sep  6 22:50:25 2022
+                                      4 ; This file was generated Wed Sep  7 19:46:05 2022
                                       5 ;--------------------------------------------------------
                                       6 	.module main
                                       7 	.optsdcc -mstm8
@@ -52,8 +52,8 @@
                                      52 	.globl _pwm2_update
                                      53 	.globl _UART_sendchar
                                      54 	.globl _UART_sendtext
-                                     55 	.globl _UART_recvchar
-                                     56 	.globl _UART_sendnum
+                                     55 	.globl _UART_sendnum
+                                     56 	.globl _UART_recvchar
                                      57 	.globl _loop
                                      58 	.globl _gpio_init
                                      59 ;--------------------------------------------------------
@@ -106,7 +106,7 @@
       000044 82 00 00 00            106 	int 0x0000 ;int15
       000048 82 00 00 00            107 	int 0x0000 ;int16
       00004C 82 00 00 00            108 	int 0x0000 ;int17
-      000050 82v00u03u57            109 	int _isr_UART1_RX ;int18
+      000050 82v00u03u55            109 	int _isr_UART1_RX ;int18
       000054 82 00 00 00            110 	int 0x0000 ;int19
       000058 82 00 00 00            111 	int 0x0000 ;int20
       00005C 82 00 00 00            112 	int 0x0000 ;int21
@@ -152,7 +152,7 @@
                                     152 	.area HOME
                                     153 	.area HOME
       000080                        154 __sdcc_program_startup:
-      000080 CCr03r87         [ 2]  155 	jp	_main
+      000080 CCr03r85         [ 2]  155 	jp	_main
                                     156 ;	return from main will return to caller
                                     157 ;--------------------------------------------------------
                                     158 ; code
@@ -820,7 +820,7 @@
       0002D6 F7               [ 1]  820 	ld	(x), a
       0002D7 5B 02            [ 2]  821 	addw	sp, #2
       0002D9 81               [ 4]  822 	ret
-                                    823 ;	uart_func.c: 8: void UART_sendchar(unsigned char usend)
+                                    823 ;	uart_func.c: 8: void UART_sendchar(unsigned char usend) //send 1 character via UART
                                     824 ;	-----------------------------------------
                                     825 ;	 function UART_sendchar
                                     826 ;	-----------------------------------------
@@ -831,7 +831,7 @@
       0002DD CDr01rFD         [ 4]  831 	call	_uart1_send
       0002E0 84               [ 1]  832 	pop	a
       0002E1 81               [ 4]  833 	ret
-                                    834 ;	uart_func.c: 13: void UART_sendtext(unsigned char *usend)
+                                    834 ;	uart_func.c: 13: void UART_sendtext(unsigned char *usend) //send text via UART
                                     835 ;	-----------------------------------------
                                     836 ;	 function UART_sendtext
                                     837 ;	-----------------------------------------
@@ -858,278 +858,278 @@
       0002FC                        858 00104$:
       0002FC 5B 02            [ 2]  859 	addw	sp, #2
       0002FE 81               [ 4]  860 	ret
-                                    861 ;	uart_func.c: 24: unsigned char UART_recvchar()
+                                    861 ;	uart_func.c: 24: void UART_sendnum(unsigned int unum) //send integer via UART
                                     862 ;	-----------------------------------------
-                                    863 ;	 function UART_recvchar
+                                    863 ;	 function UART_sendnum
                                     864 ;	-----------------------------------------
-      0002FF                        865 _UART_recvchar:
-                                    866 ;	uart_func.c: 28: urecv = uart1_recv();
-                                    867 ;	uart_func.c: 30: return urecv;
-      0002FF CCr02r0E         [ 2]  868 	jp	_uart1_recv
-                                    869 ;	uart_func.c: 33: void UART_sendnum(unsigned int unum)
-                                    870 ;	-----------------------------------------
-                                    871 ;	 function UART_sendnum
-                                    872 ;	-----------------------------------------
-      000302                        873 _UART_sendnum:
-      000302 52 0C            [ 2]  874 	sub	sp, #12
-                                    875 ;	uart_func.c: 41: numb = unum;
-      000304 1E 0F            [ 2]  876 	ldw	x, (0x0f, sp)
-                                    877 ;	uart_func.c: 42: while(numb!=0)
-      000306 4F               [ 1]  878 	clr	a
-      000307                        879 00101$:
-      000307 5D               [ 2]  880 	tnzw	x
-      000308 27 08            [ 1]  881 	jreq	00114$
-                                    882 ;	uart_func.c: 44: ndigit++;
-      00030A 4C               [ 1]  883 	inc	a
-                                    884 ;	uart_func.c: 45: numb /= 10; //count decimal digit	
-      00030B 90 AE 00 0A      [ 2]  885 	ldw	y, #0x000a
-      00030F 65               [ 2]  886 	divw	x, y
-      000310 20 F5            [ 2]  887 	jra	00101$
-      000312                        888 00114$:
-      000312 6B 09            [ 1]  889 	ld	(0x09, sp), a
-                                    890 ;	uart_func.c: 47: for(nd=0;nd<ndigit;nd++)
-      000314 4F               [ 1]  891 	clr	a
-      000315 96               [ 1]  892 	ldw	x, sp
-      000316 1C 00 03         [ 2]  893 	addw	x, #3
-      000319 1F 0B            [ 2]  894 	ldw	(0x0b, sp), x
-      00031B                        895 00106$:
-      00031B 11 09            [ 1]  896 	cp	a, (0x09, sp)
-      00031D 24 27            [ 1]  897 	jrnc	00104$
-                                    898 ;	uart_func.c: 49: numb = unum%10;
-      00031F 1E 0F            [ 2]  899 	ldw	x, (0x0f, sp)
-      000321 90 AE 00 0A      [ 2]  900 	ldw	y, #0x000a
-      000325 65               [ 2]  901 	divw	x, y
-      000326 17 01            [ 2]  902 	ldw	(0x01, sp), y
-                                    903 ;	uart_func.c: 50: unum = unum/10;
-      000328 1E 0F            [ 2]  904 	ldw	x, (0x0f, sp)
-      00032A 90 AE 00 0A      [ 2]  905 	ldw	y, #0x000a
-      00032E 65               [ 2]  906 	divw	x, y
-      00032F 1F 0F            [ 2]  907 	ldw	(0x0f, sp), x
-                                    908 ;	uart_func.c: 51: ibuff[ndigit-(nd+1)] = numb + '0'; //start from last_index-1
-      000331 4C               [ 1]  909 	inc	a
-      000332 6B 0A            [ 1]  910 	ld	(0x0a, sp), a
-      000334 7B 09            [ 1]  911 	ld	a, (0x09, sp)
-      000336 10 0A            [ 1]  912 	sub	a, (0x0a, sp)
-      000338 5F               [ 1]  913 	clrw	x
-      000339 97               [ 1]  914 	ld	xl, a
-      00033A 72 FB 0B         [ 2]  915 	addw	x, (0x0b, sp)
-      00033D 7B 02            [ 1]  916 	ld	a, (0x02, sp)
-      00033F AB 30            [ 1]  917 	add	a, #0x30
-      000341 F7               [ 1]  918 	ld	(x), a
-                                    919 ;	uart_func.c: 47: for(nd=0;nd<ndigit;nd++)
-      000342 7B 0A            [ 1]  920 	ld	a, (0x0a, sp)
-      000344 20 D5            [ 2]  921 	jra	00106$
-      000346                        922 00104$:
-                                    923 ;	uart_func.c: 53: ibuff[ndigit] = '\0'; //last character is null
-      000346 5F               [ 1]  924 	clrw	x
-      000347 7B 09            [ 1]  925 	ld	a, (0x09, sp)
-      000349 97               [ 1]  926 	ld	xl, a
-      00034A 72 FB 0B         [ 2]  927 	addw	x, (0x0b, sp)
-      00034D 7F               [ 1]  928 	clr	(x)
-                                    929 ;	uart_func.c: 55: UART_sendtext(ibuff);
-      00034E 1E 0B            [ 2]  930 	ldw	x, (0x0b, sp)
-      000350 89               [ 2]  931 	pushw	x
-      000351 CDr02rE2         [ 4]  932 	call	_UART_sendtext
-      000354 5B 0E            [ 2]  933 	addw	sp, #14
-      000356 81               [ 4]  934 	ret
+      0002FF                        865 _UART_sendnum:
+      0002FF 52 0C            [ 2]  866 	sub	sp, #12
+                                    867 ;	uart_func.c: 32: numb = unum;
+      000301 1E 0F            [ 2]  868 	ldw	x, (0x0f, sp)
+                                    869 ;	uart_func.c: 33: while(numb!=0)
+      000303 4F               [ 1]  870 	clr	a
+      000304                        871 00101$:
+      000304 5D               [ 2]  872 	tnzw	x
+      000305 27 08            [ 1]  873 	jreq	00114$
+                                    874 ;	uart_func.c: 35: ndigit++;
+      000307 4C               [ 1]  875 	inc	a
+                                    876 ;	uart_func.c: 36: numb /= 10; //count decimal digit	
+      000308 90 AE 00 0A      [ 2]  877 	ldw	y, #0x000a
+      00030C 65               [ 2]  878 	divw	x, y
+      00030D 20 F5            [ 2]  879 	jra	00101$
+      00030F                        880 00114$:
+      00030F 6B 09            [ 1]  881 	ld	(0x09, sp), a
+                                    882 ;	uart_func.c: 38: for(nd=0;nd<ndigit;nd++)
+      000311 4F               [ 1]  883 	clr	a
+      000312 96               [ 1]  884 	ldw	x, sp
+      000313 5C               [ 2]  885 	incw	x
+      000314 1F 0A            [ 2]  886 	ldw	(0x0a, sp), x
+      000316                        887 00106$:
+      000316 11 09            [ 1]  888 	cp	a, (0x09, sp)
+      000318 24 27            [ 1]  889 	jrnc	00104$
+                                    890 ;	uart_func.c: 40: numb = unum%10;
+      00031A 1E 0F            [ 2]  891 	ldw	x, (0x0f, sp)
+      00031C 90 AE 00 0A      [ 2]  892 	ldw	y, #0x000a
+      000320 65               [ 2]  893 	divw	x, y
+      000321 17 07            [ 2]  894 	ldw	(0x07, sp), y
+                                    895 ;	uart_func.c: 41: unum = unum/10;
+      000323 1E 0F            [ 2]  896 	ldw	x, (0x0f, sp)
+      000325 90 AE 00 0A      [ 2]  897 	ldw	y, #0x000a
+      000329 65               [ 2]  898 	divw	x, y
+      00032A 1F 0F            [ 2]  899 	ldw	(0x0f, sp), x
+                                    900 ;	uart_func.c: 42: ibuff[ndigit-(nd+1)] = numb + '0'; //start from last_index-1
+      00032C 4C               [ 1]  901 	inc	a
+      00032D 6B 0C            [ 1]  902 	ld	(0x0c, sp), a
+      00032F 7B 09            [ 1]  903 	ld	a, (0x09, sp)
+      000331 10 0C            [ 1]  904 	sub	a, (0x0c, sp)
+      000333 5F               [ 1]  905 	clrw	x
+      000334 97               [ 1]  906 	ld	xl, a
+      000335 72 FB 0A         [ 2]  907 	addw	x, (0x0a, sp)
+      000338 7B 08            [ 1]  908 	ld	a, (0x08, sp)
+      00033A AB 30            [ 1]  909 	add	a, #0x30
+      00033C F7               [ 1]  910 	ld	(x), a
+                                    911 ;	uart_func.c: 38: for(nd=0;nd<ndigit;nd++)
+      00033D 7B 0C            [ 1]  912 	ld	a, (0x0c, sp)
+      00033F 20 D5            [ 2]  913 	jra	00106$
+      000341                        914 00104$:
+                                    915 ;	uart_func.c: 44: ibuff[ndigit] = '\0'; //last character is null
+      000341 5F               [ 1]  916 	clrw	x
+      000342 7B 09            [ 1]  917 	ld	a, (0x09, sp)
+      000344 97               [ 1]  918 	ld	xl, a
+      000345 72 FB 0A         [ 2]  919 	addw	x, (0x0a, sp)
+      000348 7F               [ 1]  920 	clr	(x)
+                                    921 ;	uart_func.c: 46: UART_sendtext(ibuff);
+      000349 1E 0A            [ 2]  922 	ldw	x, (0x0a, sp)
+      00034B 89               [ 2]  923 	pushw	x
+      00034C CDr02rE2         [ 4]  924 	call	_UART_sendtext
+      00034F 5B 0E            [ 2]  925 	addw	sp, #14
+      000351 81               [ 4]  926 	ret
+                                    927 ;	uart_func.c: 49: unsigned char UART_recvchar() //receive 1 character via UART (for Polling mode)
+                                    928 ;	-----------------------------------------
+                                    929 ;	 function UART_recvchar
+                                    930 ;	-----------------------------------------
+      000352                        931 _UART_recvchar:
+                                    932 ;	uart_func.c: 53: urecv = uart1_recv();
+                                    933 ;	uart_func.c: 55: return urecv;
+      000352 CCr02r0E         [ 2]  934 	jp	_uart1_recv
                                     935 ;	main.c: 41: void isr_UART1_RX() __interrupt UART_RX_INTERRUPT_VECTOR //ISR for UART Receiver Mode
                                     936 ;	-----------------------------------------
                                     937 ;	 function isr_UART1_RX
                                     938 ;	-----------------------------------------
-      000357                        939 _isr_UART1_RX:
+      000355                        939 _isr_UART1_RX:
                                     940 ;	main.c: 43: cri = uart1_recv_i();	//receive 1 byte data
-      000357 CDr02r1F         [ 4]  941 	call	_uart1_recv_i
+      000355 CDr02r1F         [ 4]  941 	call	_uart1_recv_i
                                     942 ;	main.c: 44: if((cri=='o')||(cri=='O')) LEDODR &= ~(1<<LED1); //LED ON (active low)
-      00035A C7u00u01         [ 1]  943 	ld	_cri+0, a
-      00035D A1 6F            [ 1]  944 	cp	a, #0x6f
-      00035F 27 07            [ 1]  945 	jreq	00104$
-      000361 C6u00u01         [ 1]  946 	ld	a, _cri+0
-      000364 A1 4F            [ 1]  947 	cp	a, #0x4f
-      000366 26 09            [ 1]  948 	jrne	00105$
-      000368                        949 00104$:
-      000368 AE 50 05         [ 2]  950 	ldw	x, #0x5005
-      00036B F6               [ 1]  951 	ld	a, (x)
-      00036C A4 DF            [ 1]  952 	and	a, #0xdf
-      00036E F7               [ 1]  953 	ld	(x), a
-      00036F 20 15            [ 2]  954 	jra	00108$
-      000371                        955 00105$:
+      000358 C7u00u01         [ 1]  943 	ld	_cri+0, a
+      00035B A1 6F            [ 1]  944 	cp	a, #0x6f
+      00035D 27 07            [ 1]  945 	jreq	00104$
+      00035F C6u00u01         [ 1]  946 	ld	a, _cri+0
+      000362 A1 4F            [ 1]  947 	cp	a, #0x4f
+      000364 26 09            [ 1]  948 	jrne	00105$
+      000366                        949 00104$:
+      000366 AE 50 05         [ 2]  950 	ldw	x, #0x5005
+      000369 F6               [ 1]  951 	ld	a, (x)
+      00036A A4 DF            [ 1]  952 	and	a, #0xdf
+      00036C F7               [ 1]  953 	ld	(x), a
+      00036D 20 15            [ 2]  954 	jra	00108$
+      00036F                        955 00105$:
                                     956 ;	main.c: 45: else if((cri=='x')||(cri=='X')) LEDODR |= 1<<LED1; //LED OFF (active low)
-      000371 C6u00u01         [ 1]  957 	ld	a, _cri+0
-      000374 A1 78            [ 1]  958 	cp	a, #0x78
-      000376 27 07            [ 1]  959 	jreq	00101$
-      000378 C6u00u01         [ 1]  960 	ld	a, _cri+0
-      00037B A1 58            [ 1]  961 	cp	a, #0x58
-      00037D 26 07            [ 1]  962 	jrne	00108$
-      00037F                        963 00101$:
-      00037F AE 50 05         [ 2]  964 	ldw	x, #0x5005
-      000382 F6               [ 1]  965 	ld	a, (x)
-      000383 AA 20            [ 1]  966 	or	a, #0x20
-      000385 F7               [ 1]  967 	ld	(x), a
-      000386                        968 00108$:
-      000386 80               [11]  969 	iret
+      00036F C6u00u01         [ 1]  957 	ld	a, _cri+0
+      000372 A1 78            [ 1]  958 	cp	a, #0x78
+      000374 27 07            [ 1]  959 	jreq	00101$
+      000376 C6u00u01         [ 1]  960 	ld	a, _cri+0
+      000379 A1 58            [ 1]  961 	cp	a, #0x58
+      00037B 26 07            [ 1]  962 	jrne	00108$
+      00037D                        963 00101$:
+      00037D AE 50 05         [ 2]  964 	ldw	x, #0x5005
+      000380 F6               [ 1]  965 	ld	a, (x)
+      000381 AA 20            [ 1]  966 	or	a, #0x20
+      000383 F7               [ 1]  967 	ld	(x), a
+      000384                        968 00108$:
+      000384 80               [11]  969 	iret
                                     970 ;	main.c: 53: int main()
                                     971 ;	-----------------------------------------
                                     972 ;	 function main
                                     973 ;	-----------------------------------------
-      000387                        974 _main:
+      000385                        974 _main:
                                     975 ;	main.c: 55: clock_init();
-      000387 CDr00rAF         [ 4]  976 	call	_clock_init
+      000385 CDr00rAF         [ 4]  976 	call	_clock_init
                                     977 ;	main.c: 56: delay_init();
-      00038A CDr00r00         [ 4]  978 	call	_delay_init
+      000388 CDr00r00         [ 4]  978 	call	_delay_init
                                     979 ;	main.c: 57: gpio_init();
-      00038D CDr04r1D         [ 4]  980 	call	_gpio_init
+      00038B CDr04r1B         [ 4]  980 	call	_gpio_init
                                     981 ;	main.c: 58: adc_init();
-      000390 CDr01r78         [ 4]  982 	call	_adc_init
+      00038E CDr01r78         [ 4]  982 	call	_adc_init
                                     983 ;	main.c: 59: uart1_init(UART_RX_INTERRUPT_ENABLED); //UART RX using Interrupt
-      000393 4B 01            [ 1]  984 	push	#0x01
-      000395 CDr01rC5         [ 4]  985 	call	_uart1_init
-      000398 84               [ 1]  986 	pop	a
+      000391 4B 01            [ 1]  984 	push	#0x01
+      000393 CDr01rC5         [ 4]  985 	call	_uart1_init
+      000396 84               [ 1]  986 	pop	a
                                     987 ;	main.c: 61: cri = 0; //init value of UART RX buffer
-      000399 72 5Fu00u01      [ 1]  988 	clr	_cri+0
+      000397 72 5Fu00u01      [ 1]  988 	clr	_cri+0
                                     989 ;	main.c: 63: enable_interrupts();
-      00039D 9A               [ 1]  990 	rim 
+      00039B 9A               [ 1]  990 	rim 
                                     991 ;	main.c: 65: loop();
-      00039E CDr03rA3         [ 4]  992 	call	_loop
+      00039C CDr03rA1         [ 4]  992 	call	_loop
                                     993 ;	main.c: 66: return 0;
-      0003A1 5F               [ 1]  994 	clrw	x
-      0003A2 81               [ 4]  995 	ret
+      00039F 5F               [ 1]  994 	clrw	x
+      0003A0 81               [ 4]  995 	ret
                                     996 ;	main.c: 71: void loop()
                                     997 ;	-----------------------------------------
                                     998 ;	 function loop
                                     999 ;	-----------------------------------------
-      0003A3                       1000 _loop:
+      0003A1                       1000 _loop:
                                    1001 ;	main.c: 73: while(1)
-      0003A3                       1002 00102$:
+      0003A1                       1002 00102$:
                                    1003 ;	main.c: 75: acc = read_adc(ACCX); //read Accelerometer X value
-      0003A3 4B 03            [ 1] 1004 	push	#0x03
-      0003A5 CDr01r85         [ 4] 1005 	call	_read_adc
-      0003A8 84               [ 1] 1006 	pop	a
-      0003A9 CFu00u02         [ 2] 1007 	ldw	_acc+0, x
+      0003A1 4B 03            [ 1] 1004 	push	#0x03
+      0003A3 CDr01r85         [ 4] 1005 	call	_read_adc
+      0003A6 84               [ 1] 1006 	pop	a
+      0003A7 CFu00u02         [ 2] 1007 	ldw	_acc+0, x
                                    1008 ;	main.c: 76: UART_sendtext("| X = ");
-      0003AC AEr04r64         [ 2] 1009 	ldw	x, #___str_0+0
-      0003AF 89               [ 2] 1010 	pushw	x
-      0003B0 CDr02rE2         [ 4] 1011 	call	_UART_sendtext
-      0003B3 5B 02            [ 2] 1012 	addw	sp, #2
+      0003AA AEr04r62         [ 2] 1009 	ldw	x, #___str_0+0
+      0003AD 89               [ 2] 1010 	pushw	x
+      0003AE CDr02rE2         [ 4] 1011 	call	_UART_sendtext
+      0003B1 5B 02            [ 2] 1012 	addw	sp, #2
                                    1013 ;	main.c: 77: UART_sendnum(acc); //send Accelerometer X value
-      0003B5 3Bu00u03         [ 1] 1014 	push	_acc+1
-      0003B8 3Bu00u02         [ 1] 1015 	push	_acc+0
-      0003BB CDr03r02         [ 4] 1016 	call	_UART_sendnum
-      0003BE 5B 02            [ 2] 1017 	addw	sp, #2
+      0003B3 3Bu00u03         [ 1] 1014 	push	_acc+1
+      0003B6 3Bu00u02         [ 1] 1015 	push	_acc+0
+      0003B9 CDr02rFF         [ 4] 1016 	call	_UART_sendnum
+      0003BC 5B 02            [ 2] 1017 	addw	sp, #2
                                    1018 ;	main.c: 79: acc = read_adc(ACCY); //read Accelerometer Y value
-      0003C0 4B 04            [ 1] 1019 	push	#0x04
-      0003C2 CDr01r85         [ 4] 1020 	call	_read_adc
-      0003C5 84               [ 1] 1021 	pop	a
-      0003C6 CFu00u02         [ 2] 1022 	ldw	_acc+0, x
+      0003BE 4B 04            [ 1] 1019 	push	#0x04
+      0003C0 CDr01r85         [ 4] 1020 	call	_read_adc
+      0003C3 84               [ 1] 1021 	pop	a
+      0003C4 CFu00u02         [ 2] 1022 	ldw	_acc+0, x
                                    1023 ;	main.c: 80: UART_sendtext(" | Y = ");
-      0003C9 AEr04r6B         [ 2] 1024 	ldw	x, #___str_1+0
-      0003CC 89               [ 2] 1025 	pushw	x
-      0003CD CDr02rE2         [ 4] 1026 	call	_UART_sendtext
-      0003D0 5B 02            [ 2] 1027 	addw	sp, #2
+      0003C7 AEr04r69         [ 2] 1024 	ldw	x, #___str_1+0
+      0003CA 89               [ 2] 1025 	pushw	x
+      0003CB CDr02rE2         [ 4] 1026 	call	_UART_sendtext
+      0003CE 5B 02            [ 2] 1027 	addw	sp, #2
                                    1028 ;	main.c: 81: UART_sendnum(acc); //send Accelerometer Y value
-      0003D2 3Bu00u03         [ 1] 1029 	push	_acc+1
-      0003D5 3Bu00u02         [ 1] 1030 	push	_acc+0
-      0003D8 CDr03r02         [ 4] 1031 	call	_UART_sendnum
-      0003DB 5B 02            [ 2] 1032 	addw	sp, #2
+      0003D0 3Bu00u03         [ 1] 1029 	push	_acc+1
+      0003D3 3Bu00u02         [ 1] 1030 	push	_acc+0
+      0003D6 CDr02rFF         [ 4] 1031 	call	_UART_sendnum
+      0003D9 5B 02            [ 2] 1032 	addw	sp, #2
                                    1033 ;	main.c: 83: acc = read_adc(ACCZ); //read Accelerometer Z value
-      0003DD 4B 02            [ 1] 1034 	push	#0x02
-      0003DF CDr01r85         [ 4] 1035 	call	_read_adc
-      0003E2 84               [ 1] 1036 	pop	a
-      0003E3 CFu00u02         [ 2] 1037 	ldw	_acc+0, x
+      0003DB 4B 02            [ 1] 1034 	push	#0x02
+      0003DD CDr01r85         [ 4] 1035 	call	_read_adc
+      0003E0 84               [ 1] 1036 	pop	a
+      0003E1 CFu00u02         [ 2] 1037 	ldw	_acc+0, x
                                    1038 ;	main.c: 84: UART_sendtext(" | Z = ");
-      0003E6 AEr04r73         [ 2] 1039 	ldw	x, #___str_2+0
-      0003E9 89               [ 2] 1040 	pushw	x
-      0003EA CDr02rE2         [ 4] 1041 	call	_UART_sendtext
-      0003ED 5B 02            [ 2] 1042 	addw	sp, #2
+      0003E4 AEr04r71         [ 2] 1039 	ldw	x, #___str_2+0
+      0003E7 89               [ 2] 1040 	pushw	x
+      0003E8 CDr02rE2         [ 4] 1041 	call	_UART_sendtext
+      0003EB 5B 02            [ 2] 1042 	addw	sp, #2
                                    1043 ;	main.c: 85: UART_sendnum(acc); //send Accelerometer Z value
-      0003EF 3Bu00u03         [ 1] 1044 	push	_acc+1
-      0003F2 3Bu00u02         [ 1] 1045 	push	_acc+0
-      0003F5 CDr03r02         [ 4] 1046 	call	_UART_sendnum
-      0003F8 5B 02            [ 2] 1047 	addw	sp, #2
+      0003ED 3Bu00u03         [ 1] 1044 	push	_acc+1
+      0003F0 3Bu00u02         [ 1] 1045 	push	_acc+0
+      0003F3 CDr02rFF         [ 4] 1046 	call	_UART_sendnum
+      0003F6 5B 02            [ 2] 1047 	addw	sp, #2
                                    1048 ;	main.c: 86: UART_sendtext(" |");
-      0003FA AEr04r7B         [ 2] 1049 	ldw	x, #___str_3+0
-      0003FD 89               [ 2] 1050 	pushw	x
-      0003FE CDr02rE2         [ 4] 1051 	call	_UART_sendtext
-      000401 5B 02            [ 2] 1052 	addw	sp, #2
+      0003F8 AEr04r79         [ 2] 1049 	ldw	x, #___str_3+0
+      0003FB 89               [ 2] 1050 	pushw	x
+      0003FC CDr02rE2         [ 4] 1051 	call	_UART_sendtext
+      0003FF 5B 02            [ 2] 1052 	addw	sp, #2
                                    1053 ;	main.c: 89: UART_sendchar('\r'); //return
-      000403 4B 0D            [ 1] 1054 	push	#0x0d
-      000405 CDr02rDA         [ 4] 1055 	call	_UART_sendchar
-      000408 84               [ 1] 1056 	pop	a
+      000401 4B 0D            [ 1] 1054 	push	#0x0d
+      000403 CDr02rDA         [ 4] 1055 	call	_UART_sendchar
+      000406 84               [ 1] 1056 	pop	a
                                    1057 ;	main.c: 90: UART_sendchar('\n'); //newline
-      000409 4B 0A            [ 1] 1058 	push	#0x0a
-      00040B CDr02rDA         [ 4] 1059 	call	_UART_sendchar
-      00040E 84               [ 1] 1060 	pop	a
+      000407 4B 0A            [ 1] 1058 	push	#0x0a
+      000409 CDr02rDA         [ 4] 1059 	call	_UART_sendchar
+      00040C 84               [ 1] 1060 	pop	a
                                    1061 ;	main.c: 92: delay_ms(500);
-      00040F 4B F4            [ 1] 1062 	push	#0xf4
-      000411 4B 01            [ 1] 1063 	push	#0x01
-      000413 5F               [ 1] 1064 	clrw	x
-      000414 89               [ 2] 1065 	pushw	x
-      000415 CDr00r55         [ 4] 1066 	call	_delay_ms
-      000418 5B 04            [ 2] 1067 	addw	sp, #4
-      00041A 20 87            [ 2] 1068 	jra	00102$
-      00041C 81               [ 4] 1069 	ret
+      00040D 4B F4            [ 1] 1062 	push	#0xf4
+      00040F 4B 01            [ 1] 1063 	push	#0x01
+      000411 5F               [ 1] 1064 	clrw	x
+      000412 89               [ 2] 1065 	pushw	x
+      000413 CDr00r55         [ 4] 1066 	call	_delay_ms
+      000416 5B 04            [ 2] 1067 	addw	sp, #4
+      000418 20 87            [ 2] 1068 	jra	00102$
+      00041A 81               [ 4] 1069 	ret
                                    1070 ;	main.c: 99: void gpio_init()
                                    1071 ;	-----------------------------------------
                                    1072 ;	 function gpio_init
                                    1073 ;	-----------------------------------------
-      00041D                       1074 _gpio_init:
+      00041B                       1074 _gpio_init:
                                    1075 ;	main.c: 102: ACCXDDR |= (INPUT<<ACCX) | (INPUT<<ACCY);
-      00041D AE 50 11         [ 2] 1076 	ldw	x, #0x5011
-      000420 F6               [ 1] 1077 	ld	a, (x)
-      000421 AE 50 11         [ 2] 1078 	ldw	x, #0x5011
-      000424 F7               [ 1] 1079 	ld	(x), a
+      00041B AE 50 11         [ 2] 1076 	ldw	x, #0x5011
+      00041E F6               [ 1] 1077 	ld	a, (x)
+      00041F AE 50 11         [ 2] 1078 	ldw	x, #0x5011
+      000422 F7               [ 1] 1079 	ld	(x), a
                                    1080 ;	main.c: 103: ACCXCR1 |= (floating<<ACCX) | (floating<<ACCY);
-      000425 AE 50 12         [ 2] 1081 	ldw	x, #0x5012
-      000428 F6               [ 1] 1082 	ld	a, (x)
-      000429 AE 50 12         [ 2] 1083 	ldw	x, #0x5012
-      00042C F7               [ 1] 1084 	ld	(x), a
+      000423 AE 50 12         [ 2] 1081 	ldw	x, #0x5012
+      000426 F6               [ 1] 1082 	ld	a, (x)
+      000427 AE 50 12         [ 2] 1083 	ldw	x, #0x5012
+      00042A F7               [ 1] 1084 	ld	(x), a
                                    1085 ;	main.c: 104: ACCXCR2 |= (exti_disabled<<ACCX) | (exti_disabled<<ACCY);
-      00042D AE 50 13         [ 2] 1086 	ldw	x, #0x5013
-      000430 F6               [ 1] 1087 	ld	a, (x)
-      000431 AE 50 13         [ 2] 1088 	ldw	x, #0x5013
-      000434 F7               [ 1] 1089 	ld	(x), a
+      00042B AE 50 13         [ 2] 1086 	ldw	x, #0x5013
+      00042E F6               [ 1] 1087 	ld	a, (x)
+      00042F AE 50 13         [ 2] 1088 	ldw	x, #0x5013
+      000432 F7               [ 1] 1089 	ld	(x), a
                                    1090 ;	main.c: 106: ACCZDDR |= (INPUT<<ACCZ);
-      000435 AE 50 0C         [ 2] 1091 	ldw	x, #0x500c
-      000438 F6               [ 1] 1092 	ld	a, (x)
-      000439 AE 50 0C         [ 2] 1093 	ldw	x, #0x500c
-      00043C F7               [ 1] 1094 	ld	(x), a
+      000433 AE 50 0C         [ 2] 1091 	ldw	x, #0x500c
+      000436 F6               [ 1] 1092 	ld	a, (x)
+      000437 AE 50 0C         [ 2] 1093 	ldw	x, #0x500c
+      00043A F7               [ 1] 1094 	ld	(x), a
                                    1095 ;	main.c: 107: ACCZCR1 |= (floating<<ACCZ);
-      00043D AE 50 0D         [ 2] 1096 	ldw	x, #0x500d
-      000440 F6               [ 1] 1097 	ld	a, (x)
-      000441 AE 50 0D         [ 2] 1098 	ldw	x, #0x500d
-      000444 F7               [ 1] 1099 	ld	(x), a
+      00043B AE 50 0D         [ 2] 1096 	ldw	x, #0x500d
+      00043E F6               [ 1] 1097 	ld	a, (x)
+      00043F AE 50 0D         [ 2] 1098 	ldw	x, #0x500d
+      000442 F7               [ 1] 1099 	ld	(x), a
                                    1100 ;	main.c: 108: ACCZCR2 |= (exti_disabled<<ACCZ);
-      000445 AE 50 0E         [ 2] 1101 	ldw	x, #0x500e
-      000448 F6               [ 1] 1102 	ld	a, (x)
-      000449 AE 50 0E         [ 2] 1103 	ldw	x, #0x500e
-      00044C F7               [ 1] 1104 	ld	(x), a
+      000443 AE 50 0E         [ 2] 1101 	ldw	x, #0x500e
+      000446 F6               [ 1] 1102 	ld	a, (x)
+      000447 AE 50 0E         [ 2] 1103 	ldw	x, #0x500e
+      00044A F7               [ 1] 1104 	ld	(x), a
                                    1105 ;	main.c: 111: LEDDDR |= (OUTPUT<<LED1) | (OUTPUT<<LED1);
-      00044D AE 50 07         [ 2] 1106 	ldw	x, #0x5007
-      000450 F6               [ 1] 1107 	ld	a, (x)
-      000451 AA 20            [ 1] 1108 	or	a, #0x20
-      000453 F7               [ 1] 1109 	ld	(x), a
+      00044B AE 50 07         [ 2] 1106 	ldw	x, #0x5007
+      00044E F6               [ 1] 1107 	ld	a, (x)
+      00044F AA 20            [ 1] 1108 	or	a, #0x20
+      000451 F7               [ 1] 1109 	ld	(x), a
                                    1110 ;	main.c: 112: LEDCR1 |= (pushpull<<LED1) | (pushpull<<LED1);
-      000454 AE 50 08         [ 2] 1111 	ldw	x, #0x5008
-      000457 F6               [ 1] 1112 	ld	a, (x)
-      000458 AA 20            [ 1] 1113 	or	a, #0x20
-      00045A F7               [ 1] 1114 	ld	(x), a
+      000452 AE 50 08         [ 2] 1111 	ldw	x, #0x5008
+      000455 F6               [ 1] 1112 	ld	a, (x)
+      000456 AA 20            [ 1] 1113 	or	a, #0x20
+      000458 F7               [ 1] 1114 	ld	(x), a
                                    1115 ;	main.c: 113: LEDCR2 |= (speed_2MHz<<LED1) | (speed_2MHz<<LED1);
-      00045B AE 50 09         [ 2] 1116 	ldw	x, #0x5009
-      00045E F6               [ 1] 1117 	ld	a, (x)
-      00045F AE 50 09         [ 2] 1118 	ldw	x, #0x5009
-      000462 F7               [ 1] 1119 	ld	(x), a
-      000463 81               [ 4] 1120 	ret
+      000459 AE 50 09         [ 2] 1116 	ldw	x, #0x5009
+      00045C F6               [ 1] 1117 	ld	a, (x)
+      00045D AE 50 09         [ 2] 1118 	ldw	x, #0x5009
+      000460 F7               [ 1] 1119 	ld	(x), a
+      000461 81               [ 4] 1120 	ret
                                    1121 	.area CODE
-      000464                       1122 ___str_0:
-      000464 7C 20 58 20 3D 20     1123 	.ascii "| X = "
-      00046A 00                    1124 	.db 0x00
-      00046B                       1125 ___str_1:
-      00046B 20 7C 20 59 20 3D 20  1126 	.ascii " | Y = "
-      000472 00                    1127 	.db 0x00
-      000473                       1128 ___str_2:
-      000473 20 7C 20 5A 20 3D 20  1129 	.ascii " | Z = "
-      00047A 00                    1130 	.db 0x00
-      00047B                       1131 ___str_3:
-      00047B 20 7C                 1132 	.ascii " |"
-      00047D 00                    1133 	.db 0x00
+      000462                       1122 ___str_0:
+      000462 7C 20 58 20 3D 20     1123 	.ascii "| X = "
+      000468 00                    1124 	.db 0x00
+      000469                       1125 ___str_1:
+      000469 20 7C 20 59 20 3D 20  1126 	.ascii " | Y = "
+      000470 00                    1127 	.db 0x00
+      000471                       1128 ___str_2:
+      000471 20 7C 20 5A 20 3D 20  1129 	.ascii " | Z = "
+      000478 00                    1130 	.db 0x00
+      000479                       1131 ___str_3:
+      000479 20 7C                 1132 	.ascii " |"
+      00047B 00                    1133 	.db 0x00
                                    1134 	.area INITIALIZER
                                    1135 	.area CABS (ABS)

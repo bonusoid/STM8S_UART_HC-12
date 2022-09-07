@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 3.5.0 #9253 (Apr  3 2018) (Linux)
-; This file was generated Tue Sep  6 22:50:25 2022
+; This file was generated Wed Sep  7 19:46:05 2022
 ;--------------------------------------------------------
 	.module main
 	.optsdcc -mstm8
@@ -52,8 +52,8 @@
 	.globl _pwm2_update
 	.globl _UART_sendchar
 	.globl _UART_sendtext
-	.globl _UART_recvchar
 	.globl _UART_sendnum
+	.globl _UART_recvchar
 	.globl _loop
 	.globl _gpio_init
 ;--------------------------------------------------------
@@ -820,7 +820,7 @@ _pwm2_update:
 	ld	(x), a
 	addw	sp, #2
 	ret
-;	uart_func.c: 8: void UART_sendchar(unsigned char usend)
+;	uart_func.c: 8: void UART_sendchar(unsigned char usend) //send 1 character via UART
 ;	-----------------------------------------
 ;	 function UART_sendchar
 ;	-----------------------------------------
@@ -831,7 +831,7 @@ _UART_sendchar:
 	call	_uart1_send
 	pop	a
 	ret
-;	uart_func.c: 13: void UART_sendtext(unsigned char *usend)
+;	uart_func.c: 13: void UART_sendtext(unsigned char *usend) //send text via UART
 ;	-----------------------------------------
 ;	 function UART_sendtext
 ;	-----------------------------------------
@@ -858,80 +858,80 @@ _UART_sendtext:
 00104$:
 	addw	sp, #2
 	ret
-;	uart_func.c: 24: unsigned char UART_recvchar()
-;	-----------------------------------------
-;	 function UART_recvchar
-;	-----------------------------------------
-_UART_recvchar:
-;	uart_func.c: 28: urecv = uart1_recv();
-;	uart_func.c: 30: return urecv;
-	jp	_uart1_recv
-;	uart_func.c: 33: void UART_sendnum(unsigned int unum)
+;	uart_func.c: 24: void UART_sendnum(unsigned int unum) //send integer via UART
 ;	-----------------------------------------
 ;	 function UART_sendnum
 ;	-----------------------------------------
 _UART_sendnum:
 	sub	sp, #12
-;	uart_func.c: 41: numb = unum;
+;	uart_func.c: 32: numb = unum;
 	ldw	x, (0x0f, sp)
-;	uart_func.c: 42: while(numb!=0)
+;	uart_func.c: 33: while(numb!=0)
 	clr	a
 00101$:
 	tnzw	x
 	jreq	00114$
-;	uart_func.c: 44: ndigit++;
+;	uart_func.c: 35: ndigit++;
 	inc	a
-;	uart_func.c: 45: numb /= 10; //count decimal digit	
+;	uart_func.c: 36: numb /= 10; //count decimal digit	
 	ldw	y, #0x000a
 	divw	x, y
 	jra	00101$
 00114$:
 	ld	(0x09, sp), a
-;	uart_func.c: 47: for(nd=0;nd<ndigit;nd++)
+;	uart_func.c: 38: for(nd=0;nd<ndigit;nd++)
 	clr	a
 	ldw	x, sp
-	addw	x, #3
-	ldw	(0x0b, sp), x
+	incw	x
+	ldw	(0x0a, sp), x
 00106$:
 	cp	a, (0x09, sp)
 	jrnc	00104$
-;	uart_func.c: 49: numb = unum%10;
+;	uart_func.c: 40: numb = unum%10;
 	ldw	x, (0x0f, sp)
 	ldw	y, #0x000a
 	divw	x, y
-	ldw	(0x01, sp), y
-;	uart_func.c: 50: unum = unum/10;
+	ldw	(0x07, sp), y
+;	uart_func.c: 41: unum = unum/10;
 	ldw	x, (0x0f, sp)
 	ldw	y, #0x000a
 	divw	x, y
 	ldw	(0x0f, sp), x
-;	uart_func.c: 51: ibuff[ndigit-(nd+1)] = numb + '0'; //start from last_index-1
+;	uart_func.c: 42: ibuff[ndigit-(nd+1)] = numb + '0'; //start from last_index-1
 	inc	a
-	ld	(0x0a, sp), a
+	ld	(0x0c, sp), a
 	ld	a, (0x09, sp)
-	sub	a, (0x0a, sp)
+	sub	a, (0x0c, sp)
 	clrw	x
 	ld	xl, a
-	addw	x, (0x0b, sp)
-	ld	a, (0x02, sp)
+	addw	x, (0x0a, sp)
+	ld	a, (0x08, sp)
 	add	a, #0x30
 	ld	(x), a
-;	uart_func.c: 47: for(nd=0;nd<ndigit;nd++)
-	ld	a, (0x0a, sp)
+;	uart_func.c: 38: for(nd=0;nd<ndigit;nd++)
+	ld	a, (0x0c, sp)
 	jra	00106$
 00104$:
-;	uart_func.c: 53: ibuff[ndigit] = '\0'; //last character is null
+;	uart_func.c: 44: ibuff[ndigit] = '\0'; //last character is null
 	clrw	x
 	ld	a, (0x09, sp)
 	ld	xl, a
-	addw	x, (0x0b, sp)
+	addw	x, (0x0a, sp)
 	clr	(x)
-;	uart_func.c: 55: UART_sendtext(ibuff);
-	ldw	x, (0x0b, sp)
+;	uart_func.c: 46: UART_sendtext(ibuff);
+	ldw	x, (0x0a, sp)
 	pushw	x
 	call	_UART_sendtext
 	addw	sp, #14
 	ret
+;	uart_func.c: 49: unsigned char UART_recvchar() //receive 1 character via UART (for Polling mode)
+;	-----------------------------------------
+;	 function UART_recvchar
+;	-----------------------------------------
+_UART_recvchar:
+;	uart_func.c: 53: urecv = uart1_recv();
+;	uart_func.c: 55: return urecv;
+	jp	_uart1_recv
 ;	main.c: 41: void isr_UART1_RX() __interrupt UART_RX_INTERRUPT_VECTOR //ISR for UART Receiver Mode
 ;	-----------------------------------------
 ;	 function isr_UART1_RX
